@@ -29,7 +29,6 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         userService.saveUser(user);
         userService.saveUser(admin);
 
-//        MAKE CONFLICT TO TESTS - APPLICATION CONTEXT FAILED, COMMAND LINE RUNNER ERROR - NEED TO SOLVE
         admin.addRole(Role.ROLE_ADMIN);
         admin.getKingdom().addBuilding(new Building("townhall"));
         admin.getKingdom().addTroop(new Troop());

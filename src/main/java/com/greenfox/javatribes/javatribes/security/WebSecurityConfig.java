@@ -38,9 +38,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             .authorizeRequests()
             .antMatchers("/login*").permitAll()
             .antMatchers("/register*").permitAll()
+            .antMatchers("/h2-console/*").permitAll()
             .anyRequest().authenticated()
             .and()
-            .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+            .apply(new JwtTokenFilterConfigurer(jwtTokenProvider))
+            .and()
+            .headers().frameOptions().sameOrigin();
   }
 
   @Override
