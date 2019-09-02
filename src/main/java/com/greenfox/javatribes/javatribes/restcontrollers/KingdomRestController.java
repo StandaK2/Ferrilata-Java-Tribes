@@ -3,12 +3,10 @@ package com.greenfox.javatribes.javatribes.restcontrollers;
 import com.greenfox.javatribes.javatribes.dto.RequestObject;
 import com.greenfox.javatribes.javatribes.exceptions.CustomException;
 import com.greenfox.javatribes.javatribes.model.Kingdom;
-import com.greenfox.javatribes.javatribes.model.Role;
 import com.greenfox.javatribes.javatribes.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -20,7 +18,7 @@ public class KingdomRestController {
     UserService userService;
 
     @GetMapping("/kingdom")
-    public ResponseEntity<Object> displayKingdom(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Object> displayKingdom(HttpServletRequest httpServletRequest) throws CustomException {
 
         Kingdom kingdom = userService.getUserFromToken(httpServletRequest).getKingdom();
         return ResponseEntity.status(HttpStatus.valueOf(200)).body(kingdom);

@@ -1,5 +1,7 @@
 package com.greenfox.javatribes.javatribes.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.greenfox.javatribes.javatribes.dto.ResponseObject;
 import com.greenfox.javatribes.javatribes.exceptions.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,9 +23,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-    String token = jwtTokenProvider.resolveToken(httpServletRequest);
+  protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                                  FilterChain filterChain) throws ServletException, IOException {
+
     try {
+      String token = jwtTokenProvider.resolveToken(httpServletRequest);
       if (token != null && jwtTokenProvider.validateToken(token)) {
         Authentication auth = jwtTokenProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -31,7 +35,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     } catch (CustomException ex) {
       //this is very important, since it guarantees the user is not authenticated at all
       SecurityContextHolder.clearContext();
-      httpServletResponse.sendError(ex.getHttpStatus().value(), ex.getMessage());
+
+      httpServletResponse.setContentType("application/json");
+      httpServletResponse.setStatus(ex.getHttpStatus().value());
+      ObjectMapper objectMapper = new ObjectMapper();
+      ResponseObject responseObject = new ResponseObject("error", ex.getMessage());
+      httpServletResponse.getOutputStream().println(objectMapper.writeValueAsString(responseObject));
       return;
     }
 

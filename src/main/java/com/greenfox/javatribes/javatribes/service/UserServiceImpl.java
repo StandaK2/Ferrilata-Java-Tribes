@@ -39,9 +39,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserFromToken(HttpServletRequest httpServletRequest) {
+    public User getUserFromToken(HttpServletRequest httpServletRequest) throws CustomException {
 
-        return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(httpServletRequest))).get();
+        Optional<User> optionalUser = userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(httpServletRequest)));
+
+        if (!optionalUser.isPresent()) {
+            throw new CustomException("No such user - wrong username.", HttpStatus.valueOf(401));
+        }
+        return optionalUser.get();
     }
 
     @Override
@@ -73,6 +78,7 @@ public class UserServiceImpl implements UserService {
 
         return kingdom;
     }
+
 
     @Override
     public Boolean existsByUsername(String username) throws CustomException {

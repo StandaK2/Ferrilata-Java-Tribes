@@ -52,22 +52,24 @@ public class JwtTokenProvider {
     return Jwts.parser().setSigningKey(signingKey).parseClaimsJws(token).getBody().getSubject();
   }
 
-  public String resolveToken(HttpServletRequest req) {
+  public String resolveToken(HttpServletRequest req) throws CustomException {
 
     String bearerToken = req.getHeader(SecurityConstants.TOKEN_HEADER);
 
-    //    IN CASE OF USING TOKEN PREFIX (IT IS USUAL BUT FRONTEND DOES NOT USE PREFIX)
-    //    if (bearerToken != null && bearerToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+    if (bearerToken != null && bearerToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 
-    return bearerToken;
+      return bearerToken.substring(SecurityConstants.TOKEN_PREFIX.length());
+    } else {
+      throw new CustomException("Expired or invalid JWT token", HttpStatus.FORBIDDEN);
+    }
   }
 
-  public boolean validateToken(String token) {
+  public boolean validateToken(String token) throws CustomException {
     try {
       Jwts.parser().setSigningKey(signingKey).parseClaimsJws(token);
       return true;
     } catch (JwtException | IllegalArgumentException e) {
-      throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new CustomException("Expired or invalid JWT token", HttpStatus.FORBIDDEN);
     }
   }
 }
