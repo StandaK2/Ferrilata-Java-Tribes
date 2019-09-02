@@ -1,6 +1,4 @@
-# Tribes of Lagopus API specification
-- [Project description](https://github.com/greenfox-academy/teaching-materials/tree/master/team-project/tribes-of-lagopus)
-- [Model descriptions](https://github.com/greenfox-academy/teaching-materials/tree/master/team-project/tribes_models.md)
+# Tribes API specification
 
 ## Mandatory request header parameter to all endpoints except the `/register` and `/login`:
 `X-tribes-token=<token>`
